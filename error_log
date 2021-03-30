@@ -1,0 +1,57 @@
+[23-Mar-2021 16:54:32 America/New_York] PHP Parse error:  syntax error, unexpected '<', expecting end of file in /home/asilrzos/apothecary/3_9/moodle/local/form_conditioner/view.php on line 23
+[23-Mar-2021 17:05:38 America/Chicago] Default exception handler: Exception - Argument 1 passed to renderer_base::render() must implement interface renderable, null given, called in [dirroot]/local/form_conditioner/view.php on line 33 Debug: 
+Error code: generalexceptionmessage
+* line 221 of /lib/outputrenderers.php: TypeError thrown
+* line 33 of /local/form_conditioner/view.php: call to renderer_base->render()
+
+[24-Mar-2021 10:49:52 America/Chicago] Default exception handler: Coding error detected, it must be fixed by a programmer: Attempt to require a JavaScript file that does not exist. Debug: /local/FormConditioner/javascript/script.js
+Error code: codingerror
+* line 724 of /lib/outputrequirementslib.php: coding_exception thrown
+* line 452 of /lib/outputrequirementslib.php: call to page_requirements_manager->js_fix_url()
+* line 19 of /local/form_conditioner/view.php: call to page_requirements_manager->js()
+
+[24-Mar-2021 10:54:02 America/Chicago] Default exception handler: Coding error detected, it must be fixed by a programmer: Attempt to require a JavaScript file that does not exist. Debug: /local/FormConditioner/javascript/script.js
+Error code: codingerror
+* line 724 of /lib/outputrequirementslib.php: coding_exception thrown
+* line 452 of /lib/outputrequirementslib.php: call to page_requirements_manager->js_fix_url()
+* line 19 of /local/form_conditioner/view.php: call to page_requirements_manager->js()
+
+[24-Mar-2021 10:55:05 America/Chicago] Default exception handler: Coding error detected, it must be fixed by a programmer: Attempt to require a JavaScript file that does not exist. Debug: /local/FormConditioner/javascript/script.js
+Error code: codingerror
+* line 724 of /lib/outputrequirementslib.php: coding_exception thrown
+* line 452 of /lib/outputrequirementslib.php: call to page_requirements_manager->js_fix_url()
+* line 19 of /local/form_conditioner/view.php: call to page_requirements_manager->js()
+
+[24-Mar-2021 12:31:23 America/New_York] PHP Parse error:  syntax error, unexpected 'version' (T_STRING) in /home/asilrzos/apothecary/3_9/moodle/local/form_conditioner/index.php on line 109
+[24-Mar-2021 12:31:32 America/New_York] PHP Parse error:  syntax error, unexpected 'version' (T_STRING) in /home/asilrzos/apothecary/3_9/moodle/local/form_conditioner/index.php on line 109
+[24-Mar-2021 11:35:33 America/Chicago] Default exception handler: Coding error detected, it must be fixed by a programmer: Attempt to require a JavaScript file that does not exist. Debug: /local/FormConditioner/javascript/script.js
+Error code: codingerror
+* line 724 of /lib/outputrequirementslib.php: coding_exception thrown
+* line 452 of /lib/outputrequirementslib.php: call to page_requirements_manager->js_fix_url()
+* line 18 of /local/form_conditioner/index.php: call to page_requirements_manager->js()
+
+[24-Mar-2021 12:36:12 America/New_York] PHP Parse error:  syntax error, unexpected 'version' (T_STRING) in /home/asilrzos/apothecary/3_9/moodle/local/form_conditioner/index.php on line 107
+[24-Mar-2021 11:37:46 America/Chicago] Default exception handler: Coding error detected, it must be fixed by a programmer: Attempt to require a JavaScript file that does not exist. Debug: /local/FormConditioner/javascript/script.js
+Error code: codingerror
+* line 724 of /lib/outputrequirementslib.php: coding_exception thrown
+* line 452 of /lib/outputrequirementslib.php: call to page_requirements_manager->js_fix_url()
+* line 18 of /local/form_conditioner/index.php: call to page_requirements_manager->js()
+
+[24-Mar-2021 12:39:40 America/New_York] PHP Parse error:  syntax error, unexpected 'version' (T_STRING) in /home/asilrzos/apothecary/3_9/moodle/local/form_conditioner/index.php on line 107
+[24-Mar-2021 12:42:00 America/New_York] PHP Parse error:  syntax error, unexpected 'version' (T_STRING) in /home/asilrzos/apothecary/3_9/moodle/local/form_conditioner/index.php on line 104
+[24-Mar-2021 12:42:51 America/New_York] PHP Parse error:  syntax error, unexpected 'version' (T_STRING) in /home/asilrzos/apothecary/3_9/moodle/local/form_conditioner/index.php on line 104
+[24-Mar-2021 12:44:11 America/New_York] PHP Parse error:  syntax error, unexpected 'version' (T_STRING) in /home/asilrzos/apothecary/3_9/moodle/local/form_conditioner/index.php on line 104
+[24-Mar-2021 12:44:21 America/New_York] PHP Parse error:  syntax error, unexpected 'version' (T_STRING) in /home/asilrzos/apothecary/3_9/moodle/local/form_conditioner/index.php on line 104
+[24-Mar-2021 14:37:48 America/Chicago] Default exception handler: Coding error detected, it must be fixed by a programmer: Attempt to require a JavaScript file that does not exist. Debug: /local/FormConditioner/javascript/script.js
+Error code: codingerror
+* line 724 of /lib/outputrequirementslib.php: coding_exception thrown
+* line 452 of /lib/outputrequirementslib.php: call to page_requirements_manager->js_fix_url()
+* line 19 of /local/form_conditioner/view.php: call to page_requirements_manager->js()
+
+[24-Mar-2021 17:49:21 America/New_York] PHP Parse error:  syntax error, unexpected 'bootstrap' (T_STRING), expecting ',' or ')' in /home/asilrzos/apothecary/3_9/moodle/local/form_conditioner/index.php on line 22
+[29-Mar-2021 09:24:20 America/New_York] PHP Notice:  Undefined variable: hassiteconfig in /home/asilrzos/apothecary/3_9/moodle/local/form_conditioner/settings.php on line 9
+[29-Mar-2021 09:25:09 America/New_York] PHP Notice:  Undefined variable: hassiteconfig in /home/asilrzos/apothecary/3_9/moodle/local/form_conditioner/settings.php on line 9
+[29-Mar-2021 09:25:32 America/New_York] PHP Notice:  Undefined variable: hassiteconfig in /home/asilrzos/apothecary/3_9/moodle/local/form_conditioner/settings.php on line 9
+[29-Mar-2021 10:54:41 America/New_York] PHP Notice:  Undefined variable: hassiteconfig in /home/asilrzos/apothecary/3_9/moodle/local/form_conditioner/settings.php on line 9
+[30-Mar-2021 12:43:44 America/Chicago] PHP Warning:  include_once(/home/asilrzos/apothecary/3_9/moodle/local/form_conditioner/lib.php): failed to open stream: No such file or directory in /home/asilrzos/apothecary/3_9/moodle/lib/classes/component.php on line 861
+[30-Mar-2021 12:43:44 America/Chicago] PHP Warning:  include_once(): Failed opening '/home/asilrzos/apothecary/3_9/moodle/local/form_conditioner/lib.php' for inclusion (include_path='/home/asilrzos/apothecary/3_9/moodle/lib/pear:.:/opt/alt/php72/usr/share/pear') in /home/asilrzos/apothecary/3_9/moodle/lib/classes/component.php on line 861
