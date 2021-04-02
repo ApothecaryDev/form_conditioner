@@ -95,16 +95,16 @@ echo $OUTPUT->header();
             </div>
         </div>
     </div>
-    <div class="modal fade" id="mainDisplayModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="mainDisplayModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <h5 class="modal-title">Modal title</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
                 </div>
-                <div class="modal-body">
+                <div id="mainDisplayModalBody" class="modal-body overflow-auto">
                     ...
                 </div>
                 <div class="modal-footer">
@@ -231,19 +231,25 @@ function download(filename, text) {
 
 function setBoilerpate(conditionsData) {
     return `(function(rules) {
-
     function initConditions(data) {
-        data.conditionsObjects.forEach(function(item, index) {
-            setElementCondition(getLocalForm(data), item);
+        var conditions = data.conditionsObjects.filter(function(item, index){
+            return item.defaultDisplay == null;
         });
+        var defaults = data.conditionsObjects.filter(function(item, index){
+            return item.defaultDisplay != null;
+        });
+        
+        conditions.forEach(function(item, index) {
+            setElementCondition(getLocalForm(data), item);
+        }); 
+        defaults.forEach(function(item, index) {
+            getLocalForm(data).querySelector(item.customSelector != "true" ? '[name="' + item.name + '"]' : item.customSelector).setAttribute(item.displayType == "_defaultHidden_" ? "hidden" : "disabled", 'true');
+        }); 
     }
 
     function setElementCondition(targetForm, item) {
-
         var nameEl = targetForm.querySelector('[name="' + item.name + '"]');
-
         nameEl.addEventListener('change', function() {
-
             if (item.operator == "equal") {
                 if (this.value == item.matchValue) {
                     targetForm.querySelector(item.customSelector == "false" ? '[name="' + item.changeElement + '"]' : item.changeElement).setAttribute(item.displayType, 'true');
@@ -258,7 +264,6 @@ function setBoilerpate(conditionsData) {
                 }
             }
         });
-
     }
 
     function getLocalForm(d) {
@@ -285,15 +290,15 @@ function createRuleForm() {
         //Listening Element
         .append('<div class="col-2 param input_group"><select data-custom="false" id="' + formID + 'ListenSelect"  class="custom-select mw-100" name="listening-element"><option>Select Form Element Name</option></select></div>')
         //Operator
-        .append('<div class="col-2 param-row text-center"><div class="input_group operator param"><select class="custom-select" name="operator"><option value="equal">Is Equal</option> <option value="notequal">Is Not Equal</option> </select></div></div>')
+        .append('<div class="col-2 param-row text-center"><div class="input_group operator param"><select id="' + formID + 'OperatorSelect" name="operator" class="custom-select mw-100"><option value="equal">Is Equal</option><option value="notequal">Is Not Equal</option><option value="_defaultHidden_">Hide on Default</option><option value="_defaultDisabled_">Disable on Default</option></select></div></div>')
         //Match Value
-        .append('<div class="col-2 param-row text-center"> <div class="input_group operator param text-center"> <input type="text" name="matchstr" class="text-center form-control"></div> </div>')
+        .append('<div class="col-2 param-row text-center"><div class="input_group operator param text-center"><input id="' + formID + 'MatchStringInput" type="text" name="matchstr" class="text-center form-control"></div> </div>')
         //Display Type
-        .append('<div class="col-2 param-row text-center"> <div class="input_group param"> <select data-custom="false" class="custom-select" name="display-type"> <option value="hidden">Hide</option> <option value="disabled">Disable</option> </select> </div> </div>')
+        .append('<div class="col-2 param-row text-center"><div class="input_group param"><select id="' + formID + 'DisplaySelect" class="custom-select" name="display-type"> <option value="hidden">Hide</option> <option value="disabled">Disable</option> </select> </div> </div>')
         //Change Element
-        .append('<div class="col-2 param"><div class="input_group"> <select id="' + formID + 'ChangeSelect" style="max-width: 160px;" class="custom-select  mw-100" name="change-element"><option>Select Form Element Name</option></select> </div> </div>')
+        .append('<div class="col-2 param"><div class="input_group"><select id="' + formID + 'ChangeSelect" style="max-width: 160px;" class="custom-select  mw-100" name="change-element"><option>Select Form Element Name</option></select> </div> </div>')
         //Utility Buttons
-        .append('<div class="row param-row text-center"> <div class="col-2 param"> <div class="btn-toolbar mb-3" role="toolbar"> <div class="btn-group mr-2" role="group"><button onclick="saveCondition(' + i + ')" type="button" class="btn btn-outline-success" id="formSaveBtn' + i + '">&#10003;</button><button type="button" class="btn btn-outline-danger" id="formDelBtn' + i + '" onclick="deleteCondition(' + i + ')">-</button> </div> </div> </div> </div>');
+        .append('<div class="row param-row text-center"><div class="col-2 param"><div class="btn-toolbar mb-3" role="toolbar"><div class="btn-group mr-2" role="group"><button onclick="saveCondition(' + i + ')" type="button" class="btn btn-outline-success" id="formSaveBtn' + i + '">&#10003;</button><button type="button" class="btn btn-outline-danger" id="formDelBtn' + i + '" onclick="deleteCondition(' + i + ')">-</button> </div> </div> </div> </div>');
 
 
     selectedFormObject.nameElementObjects.forEach(function(f, i) {
@@ -302,6 +307,25 @@ function createRuleForm() {
     });
     $('#' + formID + 'ListenSelect').append('<option value="_custom_">Custom Selector</option>');
     $('#' + formID + 'ChangeSelect').append('<option value="_custom_">Custom Selector</option>');
+    
+    $('#' + formID + 'OperatorSelect').change(function(){
+
+        if($(this).val() == "_defaultHidden_" || $(this).val() == "_defaultDisabled_"){
+            $('#' + formID + 'ChangeSelect').attr('disabled', 'true');
+            $('#' + formID + 'DisplaySelect').attr('disabled', 'true');
+            $('#' + formID + 'MatchStringInput').attr('disabled', 'true');
+        } else {
+            if(  $('#' + formID + 'ChangeSelect').attr('disabled') ){
+                $('#' + formID + 'ChangeSelect').removeAttr('disabled');
+            }
+            if( $('#' + formID + 'DisplaySelect').attr('disabled')){
+                $('#' + formID + 'DisplaySelect').removeAttr('disabled');  
+            }
+            if( $('#' + formID + 'MatchStringInput').attr('disabled') ){
+                $('#' + formID + 'MatchStringInput').removeAttr('disabled');
+            }
+        }
+    });
 
     $('#' + formID + 'ChangeSelect').change(function() {
 
@@ -349,34 +373,58 @@ function downloadConditions() {
 }
 
 function saveCondition(i) {
-
-    if (
-        $('#ruleForm' + i + ' select[name="listening-element"]').val().length &&
-        $('#ruleForm' + i + ' select[name="change-element"]').val().length &&
-        $('#ruleForm' + i + ' input[name="matchstr"]').val().length
-    ) {
-        $('#formSaveBtn' + i).removeClass('btn-outline-success');
-        $('#formDelBtn' + i).removeClass('btn-outline-danger');
-        $('#ruleForm' + i + ' fieldset').attr('disabled', 'true');
-        $('#ruleForm' + i + ' fieldset').append('<span id="editBtn' + i + '" onclick="editRule(' + i + ')" style="cursor: pointer; margin: 5px; width: 15px; height: 15px;" id="edit' + i + ' fieldset">' + editSVG + '</span>')
-
-
-        selectedFormObject.conditionsObjects[i - 1] = {
-            name: $('#ruleForm' + i + ' select[name="listening-element"]').val(),
-            operator: $('#ruleForm' + i + ' select[name="operator"]').val(),
-            matchValue: $('#ruleForm' + i + ' input[name="matchstr"]').val(),
-            displayType: $('#ruleForm' + i + ' select[name="display-type"]').val(),
-            changeElement: $('#ruleForm' + i + ' select[name="change-element"]').val(),
-            customSelector: $('#ruleForm' + i + ' select[name="change-element"]').attr('data-custom')
-        };
+    if( $('#ruleForm' + i + ' select[name="operator"]').val() != "_defaultHidden_" && $('#ruleForm' + i + ' select[name="operator"]').val() != "_defaultDisabled_" ){
+   
+        //console.log($('#ruleForm' + i + ' select[name="operator"]').val() != "_defaultHidden_" , $('#ruleForm' + i + ' select[name="operator"]').val() != "_defaultDisabled_", $('#ruleForm' + i + ' select[name="operator"]').val(), $('#ruleForm' + i + ' select[name="operator"]').val()  );
+        if (
+            $('#ruleForm' + i + ' select[name="listening-element"]').val().length &&
+            $('#ruleForm' + i + ' select[name="change-element"]').val().length &&
+            $('#ruleForm' + i + ' input[name="matchstr"]').val().length
+        ) {
+            $('#formSaveBtn' + i).removeClass('btn-outline-success');
+            $('#formDelBtn' + i).removeClass('btn-outline-danger');
+            $('#ruleForm' + i + ' fieldset').attr('disabled', 'true');
+            $('#ruleForm' + i + ' fieldset').append('<span id="editBtn' + i + '" onclick="editRule(' + i + ')" style="cursor: pointer; margin: 5px; width: 15px; height: 15px;" id="edit' + i + ' fieldset">' + editSVG + '</span>')
+    
+    
+            selectedFormObject.conditionsObjects[i - 1] = {
+                name: $('#ruleForm' + i + ' select[name="listening-element"]').val(),
+                operator: $('#ruleForm' + i + ' select[name="operator"]').val(),
+                matchValue: $('#ruleForm' + i + ' input[name="matchstr"]').val(),
+                displayType: $('#ruleForm' + i + ' select[name="display-type"]').val(),
+                changeElement: $('#ruleForm' + i + ' select[name="change-element"]').val(),
+                customSelector: $('#ruleForm' + i + ' select[name="change-element"]').attr('data-custom'),
+                defaultDisplay: null
+            };
+        } else {
+            alert('Please Provide Values for all Fields');
+        }
     } else {
-        alert('Please Plovide Values for all Fields');
+  
+        if (
+            $('#ruleForm' + i + ' select[name="listening-element"]').val().length && $('#ruleForm' + i + ' select[name="listening-element"]').val() != "Select Form Element Name"
+        ) {
+            $('#formSaveBtn' + i).removeClass('btn-outline-success');
+            $('#formDelBtn' + i).removeClass('btn-outline-danger');
+            $('#ruleForm' + i + ' fieldset').attr('disabled', 'true');
+            $('#ruleForm' + i + ' fieldset').append('<span id="editBtn' + i + '" onclick="editRule(' + i + ')" style="cursor: pointer; margin: 5px; width: 15px; height: 15px;" id="edit' + i + ' fieldset">' + editSVG + '</span>')
+    
+    
+            selectedFormObject.conditionsObjects[i - 1] = {
+                name: $('#ruleForm' + i + ' select[name="listening-element"]').val(),
+                operator: $('#ruleForm' + i + ' select[name="operator"]').val(),
+                matchValue: $('#ruleForm' + i + ' select[name="operator"]').val(),
+                displayType: $('#ruleForm' + i + ' select[name="operator"]').val(),
+                changeElement: $('#ruleForm' + i + ' select[name="operator"]').val(),
+                customSelector: $('#ruleForm' + i + ' select[name="change-element"]').attr('data-custom'),
+                defaultDisplay: $('#ruleForm' + i + ' select[name="operator"]').val()
+            };
+        } else {
+            alert('Please Provide a Value for the Form Element to Select');
+        }
     }
 }
 
-function checkValues(i) {
-
-}
 
 function checkRules() {
     var ruleFields = document.getElementById('ruleFormWrap').querySelectorAll('fieldset');
@@ -397,8 +445,9 @@ function generateConditionsScript() {
     var finalConditionsOutput = {
         formID: selectedFormObject.formID,
         formNo: selectedFormObject.formNo,
-        conditionsObjects: selectedFormObject.conditionsObjects
+        conditionsObjects: selectedFormObject.conditionsObjects,
     };
+    console.log(finalConditionsOutput);
     if (checkRules()) {
         $('#mainDisplayModal').modal('show');
         $('#mainDisplayModal .modal-body').html(setBoilerpate(JSON.stringify(finalConditionsOutput)));
@@ -407,6 +456,7 @@ function generateConditionsScript() {
         alert('Please Complete and Save all Conditional Rules.')
     }
 } 	
+
 	
 	
 </script>
