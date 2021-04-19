@@ -232,38 +232,76 @@ function download(filename, text) {
 function setBoilerpate(conditionsData) {
     return `(function(rules) {
     function initConditions(data) {
-        var conditions = data.conditionsObjects.filter(function(item, index){
+        var conditions = data.conditionsObjects.filter(function(item, index) {
             return item.defaultDisplay == null;
         });
-        var defaults = data.conditionsObjects.filter(function(item, index){
+        var defaults = data.conditionsObjects.filter(function(item, index) {
             return item.defaultDisplay != null;
         });
-        
-        conditions.forEach(function(item, index) {
-            setElementCondition(getLocalForm(data), item);
-        }); 
         defaults.forEach(function(item, index) {
-            getLocalForm(data).querySelector(item.customSelector != "true" ? '[name="' + item.name + '"]' : item.customSelector).setAttribute(item.displayType == "_defaultHidden_" ? "hidden" : "disabled", 'true');
-        }); 
+            getLocalForm(data).querySelector(item.customSelector != "true" ? '[name="' + item.name + '"]' : item.customSelector).setAttribute(item.defaultDisplay == "_defaultHidden_" ? "hidden" : "disabled", 'true');
+          	getLocalForm(data).querySelector(item.customSelector != "true" ? '[name="' + item.name + '"]' : item.customSelector).setAttribute(item.defaultDisplay == "_defaultHidden_" ? "data-default-hidden" : "data-default-disabled", 'true');
+        });
+				conditions.forEach(function(item, index) {
+            setElementCondition(getLocalForm(data), item);
+        });
     }
 
     function setElementCondition(targetForm, item) {
         var nameEl = targetForm.querySelector('[name="' + item.name + '"]');
-        nameEl.addEventListener('change', function() {
-            if (item.operator == "equal") {
-                if (this.value == item.matchValue) {
-                    targetForm.querySelector(item.customSelector == "false" ? '[name="' + item.changeElement + '"]' : item.changeElement).setAttribute(item.displayType, 'true');
+        if (item.displayType == "hidden" || item.displayType == "disabled") {
+            nameEl.addEventListener('change', function() {
+                if (item.operator == "equal") {
+                    if (this.value == item.matchValue) {
+                        targetForm.querySelector(item.customSelector == "false" ? '[name="' + item.changeElement + '"]' : item.changeElement).setAttribute(item.displayType, 'true');
+                    } else {
+                        targetForm.querySelector(item.customSelector == "false" ? '[name="' + item.changeElement + '"]' : item.changeElement).removeAttribute(item.displayType);
+                    }
                 } else {
-                    targetForm.querySelector(item.customSelector == "false" ? '[name="' + item.changeElement + '"]' : item.changeElement).removeAttribute(item.displayType);
+                    if (this.value != item.matchValue) {
+                        targetForm.querySelector(item.customSelector == "false" ? '[name="' + item.changeElement + '"]' : item.changeElement).setAttribute(item.displayType, 'true');
+                    } else {
+                        targetForm.querySelector(item.customSelector == "false" ? '[name="' + item.changeElement + '"]' : item.changeElement).removeAttribute(item.displayType);
+                    }
                 }
-            } else {
-                if (this.value != item.matchValue) {
-                    targetForm.querySelector(item.customSelector == "false" ? '[name="' + item.changeElement + '"]' : item.changeElement).setAttribute(item.displayType, 'true');
-                } else {
-                    targetForm.querySelector(item.customSelector == "false" ? '[name="' + item.changeElement + '"]' : item.changeElement).removeAttribute(item.displayType);
+            });
+        } 
+				else if (item.displayType == "show" || item.displayType == "enable") {
+            var conditionerElement = targetForm.querySelector(item.customSelector == "false" ? '[name="' + item.changeElement + '"]' : item.changeElement);
+            
+            nameEl.addEventListener('change', function() {
+                
+                if (item.operator == "equal") {
+                    if (this.value == item.matchValue) {
+                      	if( conditionerElement.getAttribute("data-default-hidden") == "true" ){
+                          conditionerElement.removeAttribute("hidden");
+                        } else if( conditionerElement.getAttribute("data-default-disabled") == "true" ){
+													conditionerElement.removeAttribute("disabled");
+                        }
+                    } else {
+                        if( conditionerElement.getAttribute("data-default-hidden") == "true" ){
+                          conditionerElement.setAttribute("hidden", "true");
+                        } else if( conditionerElement.getAttribute("data-default-disabled") == "true" ){
+													conditionerElement.setAttribute("disabled", "true");
+                        }
+                    }
+                } else if (item.operator == "notequal"){
+                    if (this.value != item.matchValue) {
+                      	if( conditionerElement.getAttribute("data-default-hidden") == "true" ){
+                          conditionerElement.removeAttribute("hidden");
+                        } else if( conditionerElement.getAttribute("data-default-disabled") == "true" ){
+													conditionerElement.removeAttribute("disabled");
+                        }
+                    } else {
+                        if( conditionerElement.getAttribute("data-default-hidden") == "true" ){
+                          conditionerElement.setAttribute("hidden", "true");
+                        } else if( conditionerElement.getAttribute("data-default-disabled") == "true" ){
+													conditionerElement.setAttribute("disabled", "true");
+                        }
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     function getLocalForm(d) {
@@ -294,7 +332,7 @@ function createRuleForm() {
         //Match Value
         .append('<div class="col-2 param-row text-center"><div class="input_group operator param text-center"><input id="' + formID + 'MatchStringInput" type="text" name="matchstr" class="text-center form-control"></div> </div>')
         //Display Type
-        .append('<div class="col-2 param-row text-center"><div class="input_group param"><select id="' + formID + 'DisplaySelect" class="custom-select" name="display-type"> <option value="hidden">Hide</option> <option value="disabled">Disable</option> </select> </div> </div>')
+        .append('<div class="col-2 param-row text-center"><div class="input_group param"><select id="' + formID + 'DisplaySelect" class="custom-select" name="display-type"> <option value="hidden">Hide</option> <option value="disabled">Disable</option> <option value="show">Show</option> <option value="enable">Enable</option> </select> </div> </div>')
         //Change Element
         .append('<div class="col-2 param"><div class="input_group"><select id="' + formID + 'ChangeSelect" style="max-width: 160px;" class="custom-select  mw-100" name="change-element"><option>Select Form Element Name</option></select> </div> </div>')
         //Utility Buttons
