@@ -11,7 +11,7 @@
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+// GNU General Public License for morename details.
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
@@ -110,6 +110,12 @@ echo $OUTPUT->header();
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" onclick="downloadConditions()">Save JS</button>
+                    <button id="copyBtn" type="button" class="btn btn-outline-primary">Copy JS</button>
+                    <div class="container">
+                        <div class="alert alert-danger error-msg" role="alert" hidden="true">
+                          Error Copying to Clipboard. . .
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -231,84 +237,84 @@ function download(filename, text) {
 
 function setBoilerpate(conditionsData) {
     return `(function(rules) {
-    function initConditions(data) {
-        var conditions = data.conditionsObjects.filter(function(item, index) {
-            return item.defaultDisplay == null;
-        });
-        var defaults = data.conditionsObjects.filter(function(item, index) {
-            return item.defaultDisplay != null;
-        });
-        defaults.forEach(function(item, index) {
-            getLocalForm(data).querySelector(item.customSelector != "true" ? '[name="' + item.name + '"]' : item.customSelector).setAttribute(item.defaultDisplay == "_defaultHidden_" ? "hidden" : "disabled", 'true');
-          	getLocalForm(data).querySelector(item.customSelector != "true" ? '[name="' + item.name + '"]' : item.customSelector).setAttribute(item.defaultDisplay == "_defaultHidden_" ? "data-default-hidden" : "data-default-disabled", 'true');
-        });
-				conditions.forEach(function(item, index) {
-            setElementCondition(getLocalForm(data), item);
-        });
-    }
-
-    function setElementCondition(targetForm, item) {
-        var nameEl = targetForm.querySelector('[name="' + item.name + '"]');
-        if (item.displayType == "hidden" || item.displayType == "disabled") {
-            nameEl.addEventListener('change', function() {
-                if (item.operator == "equal") {
-                    if (this.value == item.matchValue) {
-                        targetForm.querySelector(item.customSelector == "false" ? '[name="' + item.changeElement + '"]' : item.changeElement).setAttribute(item.displayType, 'true');
-                    } else {
-                        targetForm.querySelector(item.customSelector == "false" ? '[name="' + item.changeElement + '"]' : item.changeElement).removeAttribute(item.displayType);
-                    }
-                } else {
-                    if (this.value != item.matchValue) {
-                        targetForm.querySelector(item.customSelector == "false" ? '[name="' + item.changeElement + '"]' : item.changeElement).setAttribute(item.displayType, 'true');
-                    } else {
-                        targetForm.querySelector(item.customSelector == "false" ? '[name="' + item.changeElement + '"]' : item.changeElement).removeAttribute(item.displayType);
-                    }
-                }
+        function initConditions(data) {
+            var conditions = data.conditionsObjects.filter(function(item, index) {
+                return item.defaultDisplay == null;
             });
-        } 
-				else if (item.displayType == "show" || item.displayType == "enable") {
-            var conditionerElement = targetForm.querySelector(item.customSelector == "false" ? '[name="' + item.changeElement + '"]' : item.changeElement);
-            
-            nameEl.addEventListener('change', function() {
-                
-                if (item.operator == "equal") {
-                    if (this.value == item.matchValue) {
-                      	if( conditionerElement.getAttribute("data-default-hidden") == "true" ){
-                          conditionerElement.removeAttribute("hidden");
-                        } else if( conditionerElement.getAttribute("data-default-disabled") == "true" ){
-													conditionerElement.removeAttribute("disabled");
-                        }
-                    } else {
-                        if( conditionerElement.getAttribute("data-default-hidden") == "true" ){
-                          conditionerElement.setAttribute("hidden", "true");
-                        } else if( conditionerElement.getAttribute("data-default-disabled") == "true" ){
-													conditionerElement.setAttribute("disabled", "true");
-                        }
-                    }
-                } else if (item.operator == "notequal"){
-                    if (this.value != item.matchValue) {
-                      	if( conditionerElement.getAttribute("data-default-hidden") == "true" ){
-                          conditionerElement.removeAttribute("hidden");
-                        } else if( conditionerElement.getAttribute("data-default-disabled") == "true" ){
-													conditionerElement.removeAttribute("disabled");
-                        }
-                    } else {
-                        if( conditionerElement.getAttribute("data-default-hidden") == "true" ){
-                          conditionerElement.setAttribute("hidden", "true");
-                        } else if( conditionerElement.getAttribute("data-default-disabled") == "true" ){
-													conditionerElement.setAttribute("disabled", "true");
-                        }
-                    }
-                }
+            var defaults = data.conditionsObjects.filter(function(item, index) {
+                return item.defaultDisplay != null;
+            });
+            defaults.forEach(function(item, index) {
+                getLocalForm(data).querySelector(item.customSelector != "true" ? '[name="' + item.name + '"]' : item.name).setAttribute(item.defaultDisplay == "_defaultHidden_" ? "hidden" : "disabled", 'true');
+              	getLocalForm(data).querySelector(item.customSelector != "true" ? '[name="' + item.name + '"]' : item.name).setAttribute(item.defaultDisplay == "_defaultHidden_" ? "data-default-hidden" : "data-default-disabled", 'true');
+            });
+    				conditions.forEach(function(item, index) {
+                setElementCondition(getLocalForm(data), item);
             });
         }
-    }
-
-    function getLocalForm(d) {
-        return document.getElementsByTagName('form')[d.formNo];
-    }
-    initConditions(rules);
-})(` + conditionsData + `);`;
+    
+        function setElementCondition(targetForm, item) {
+            var nameEl = targetForm.querySelector(item.customSelector == "false" ? '[name="' + item.name + '"]' : item.name);
+            if (item.displayType == "hidden" || item.displayType == "disabled") {
+                var conditionerElement = targetForm.querySelector(item.customChangeSelector == "false" ? '[name="' + item.changeElement + '"]' : item.changeElement);
+                nameEl.addEventListener('change', function() {
+                    if (item.operator == "equal") {
+                        if (this.value == item.matchValue) {
+                            conditionerElement.setAttribute(item.displayType, 'true');
+                        } else {
+                            conditionerElement.removeAttribute(item.displayType);
+                        }
+                    } else {
+                        if (this.value != item.matchValue) {
+                            conditionerElement.setAttribute(item.displayType, 'true');
+                        } else {
+                            conditionerElement.removeAttribute(item.displayType);
+                        }
+                    }
+                });
+            } else if (item.displayType == "show" || item.displayType == "enable") {
+                var conditionerElement = targetForm.querySelector(item.customChangeSelector == "false" ? '[name="' + item.changeElement + '"]' : item.changeElement);
+                
+                nameEl.addEventListener('change', function() {
+                    
+                    if (item.operator == "equal") {
+                        if (this.value == item.matchValue) {
+                          	if( conditionerElement.getAttribute("data-default-hidden") == "true" ){
+                                conditionerElement.removeAttribute("hidden");
+                            } else if( conditionerElement.getAttribute("data-default-disabled") == "true" ){
+    						    conditionerElement.removeAttribute("disabled");
+                            }
+                        } else {
+                            if( conditionerElement.getAttribute("data-default-hidden") == "true" ){
+                                conditionerElement.setAttribute("hidden", "true");
+                            } else if( conditionerElement.getAttribute("data-default-disabled") == "true" ){
+    													conditionerElement.setAttribute("disabled", "true");
+                            }
+                        }
+                    } else if (item.operator == "notequal"){
+                        if (this.value != item.matchValue) {
+                          	if( conditionerElement.getAttribute("data-default-hidden") == "true" ){
+                                conditionerElement.removeAttribute("hidden");
+                            } else if( conditionerElement.getAttribute("data-default-disabled") == "true" ){
+    						    conditionerElement.removeAttribute("disabled");
+                            }
+                        } else {
+                            if( conditionerElement.getAttribute("data-default-hidden") == "true" ){
+                                conditionerElement.setAttribute("hidden", "true");
+                            } else if( conditionerElement.getAttribute("data-default-disabled") == "true" ){
+    						    conditionerElement.setAttribute("disabled", "true");
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    
+        function getLocalForm(d) {
+            return document.getElementsByTagName('form')[d.formNo];
+        }
+        initConditions(rules);
+    })(` + conditionsData + `);`;
 }
 
 
@@ -334,7 +340,7 @@ function createRuleForm() {
         //Display Type
         .append('<div class="col-2 param-row text-center"><div class="input_group param"><select id="' + formID + 'DisplaySelect" class="custom-select" name="display-type"> <option value="hidden">Hide</option> <option value="disabled">Disable</option> <option value="show">Show</option> <option value="enable">Enable</option> </select> </div> </div>')
         //Change Element
-        .append('<div class="col-2 param"><div class="input_group"><select id="' + formID + 'ChangeSelect" style="max-width: 160px;" class="custom-select  mw-100" name="change-element"><option>Select Form Element Name</option></select> </div> </div>')
+        .append('<div class="col-2 param"><div class="input_group"><select data-custom="false" id="' + formID + 'ChangeSelect" style="max-width: 160px;" class="custom-select  mw-100" name="change-element"><option>Select Form Element Name</option></select> </div> </div>')
         //Utility Buttons
         .append('<div class="row param-row text-center"><div class="col-2 param"><div class="btn-toolbar mb-3" role="toolbar"><div class="btn-group mr-2" role="group"><button onclick="saveCondition(' + i + ')" type="button" class="btn btn-outline-success" id="formSaveBtn' + i + '">&#10003;</button><button type="button" class="btn btn-outline-danger" id="formDelBtn' + i + '" onclick="deleteCondition(' + i + ')">-</button> </div> </div> </div> </div>');
 
@@ -431,7 +437,8 @@ function saveCondition(i) {
                 matchValue: $('#ruleForm' + i + ' input[name="matchstr"]').val(),
                 displayType: $('#ruleForm' + i + ' select[name="display-type"]').val(),
                 changeElement: $('#ruleForm' + i + ' select[name="change-element"]').val(),
-                customSelector: $('#ruleForm' + i + ' select[name="change-element"]').attr('data-custom'),
+                customSelector: $('#ruleForm' + i + ' select[name="listening-element"]').attr('data-custom'),
+                customChangeSelector: $('#ruleForm' + i + ' select[name="change-element"]').attr('data-custom'),
                 defaultDisplay: null
             };
         } else {
@@ -454,7 +461,8 @@ function saveCondition(i) {
                 matchValue: $('#ruleForm' + i + ' select[name="operator"]').val(),
                 displayType: $('#ruleForm' + i + ' select[name="operator"]').val(),
                 changeElement: $('#ruleForm' + i + ' select[name="operator"]').val(),
-                customSelector: $('#ruleForm' + i + ' select[name="change-element"]').attr('data-custom'),
+                customSelector: $('#ruleForm' + i + ' select[name="listening-element"]').attr('data-custom'),
+                customChangeSelector: $('#ruleForm' + i + ' select[name="change-element"]').attr('data-custom'),
                 defaultDisplay: $('#ruleForm' + i + ' select[name="operator"]').val()
             };
         } else {
@@ -494,6 +502,38 @@ function generateConditionsScript() {
         alert('Please Complete and Save all Conditional Rules.')
     }
 } 	
+
+var outputJS = document.querySelector('#mainDisplayModalBody');
+var copyBtn = document.querySelector('#copyBtn');
+
+copyBtn.addEventListener('click', () => {
+  var selection = window.getSelection();
+  var range = document.createRange();
+  range.selectNodeContents(outputJS);
+  selection.removeAllRanges();
+  selection.addRange(range);
+
+  try {
+    document.execCommand('copy');
+    selection.removeAllRanges();
+    var original = copyBtn.textContent;
+    copyBtn.textContent = 'Copied!';
+    copyBtn.classList.add('btn-outline-success');
+    copyBtn.classList.remove('btn-outline-primary');
+    setTimeout(() => {
+      copyBtn.textContent = original;
+      copyBtn.classList.remove('btn-outline-success');
+      copyBtn.classList.add('btn-outline-primary');
+    }, 1200);
+  } catch (e) {
+    var errorMsg = document.querySelector('.error-msg');
+    errorMsg.removeAttribute("hidden");
+    setTimeout(() => {
+      errorMsg.setAttribute("hidden","true");
+    }, 1200);
+  }
+});
+
 
 	
 	
